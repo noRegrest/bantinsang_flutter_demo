@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: const HomePageWidget(),
+      home: const Loginpage(),
     );
   }
 }
@@ -661,66 +661,66 @@ class Loginpage extends StatelessWidget {
                               fontWeight: FontWeight.w400)),
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                              // height: 48,
-                              // width: 120,
-                              child: TextButton(
-                                  onPressed: () {},
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Color(0xFFEEF1F4),
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      SizedBox(
+                          height: 48,
+                          width: 120,
+                          child: TextButton(
+                              onPressed: () {},
+                              style: TextButton.styleFrom(
+                                backgroundColor: Color(0xFFEEF1F4),
+                              ),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/iconFacebook.png',
+                                    width: 21,
+                                    height: 21,
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/iconFacebook.png',
-                                        width: 21,
-                                        height: 21,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text("Facebook",
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 102, 112, 128),
-                                              fontSize: 16,
-                                              fontFamily: "roboto",
-                                              fontWeight: FontWeight.w700)),
-                                    ],
-                                  ))),
-                          SizedBox(
-                              // height: 48,
-                              // width: 120,
-                              child: Center(
-                            child: TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom(
-                                  backgroundColor: Color(0xFFEEF1F4),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/iconGoogle.png',
-                                      width: 21,
-                                      height: 21,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text("Google",
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 102, 112, 128),
-                                            fontSize: 16,
-                                            fontFamily: "roboto",
-                                            fontWeight: FontWeight.w700)),
-                                  ],
-                                )),
-                          ))
-                        ]),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("Facebook",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 102, 112, 128),
+                                          fontSize: 16,
+                                          fontFamily: "roboto",
+                                          fontWeight: FontWeight.w700)),
+                                ],
+                              ))),
+                      SizedBox(width: 31),
+                      SizedBox(
+                          height: 48,
+                          width: 120,
+                          child: TextButton(
+                              onPressed: () {},
+                              style: TextButton.styleFrom(
+                                backgroundColor: Color(0xFFEEF1F4),
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  Image.asset(
+                                    'assets/images/iconGoogle.png',
+                                    width: 21,
+                                    height: 21,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("Google",
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 102, 112, 128),
+                                          fontSize: 16,
+                                          fontFamily: "roboto",
+                                          fontWeight: FontWeight.w700)),
+                                ],
+                              ))),
+                    ]),
                     // SizedBox(height: 16),
                     Center(
                         // ignore: prefer_const_literals_to_create_immutables
