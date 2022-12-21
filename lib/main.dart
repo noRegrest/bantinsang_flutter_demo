@@ -122,6 +122,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   height: 24,
                 ),
                 // vuốt ngang
+
                 /*SizedBox(
                   height: 200,
                   child: ListView(
@@ -177,18 +178,18 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     );
                   },
                   child: SizedBox(
-                    width: 300,
+                    width: 333,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.asset("assets/images/image1.png", height: 190),
+                        Image.asset("assets/images/image1.png", height: 180),
                         SizedBox(height: 10),
                         Text("Thế giới",
                             style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'roboto',
-                                fontSize: 13,
-                                wordSpacing: 0.12)),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'roboto',
+                              fontSize: 13,
+                            )),
                         SizedBox(height: 10),
                         Text(
                             "Triều Tiên phóng tên lửa, Hàn Quốc phát cảnh báo trên đảo tiền tiêu",
