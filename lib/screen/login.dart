@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'home.dart';
 
+bool isChecked = false;
+bool _isPasswordHidden = true;
+bool _isEmailFormEmpty = true;
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
   @override
@@ -72,9 +76,15 @@ class _LoginPage extends State<LoginPage> {
                                 //luôn kiểm tra tính đúng sai
                                 autovalidateMode: AutovalidateMode.always,
                                 onChanged: (text) {
-                                  // String value = text;
-                                  // if (value.isEmpty) {}
-                                  // builder:(context)=>
+                                  if (text.isEmpty) {
+                                    setState(() {
+                                      _isEmailFormEmpty = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _isEmailFormEmpty = false;
+                                    });
+                                  }
                                 },
                                 validator: (value) {
                                   name = value!;
@@ -90,14 +100,23 @@ class _LoginPage extends State<LoginPage> {
                                 decoration: InputDecoration(
                                     isCollapsed: false,
                                     isDense: true,
-                                    //icon:
-                                    suffixIcon: IconButton(
-                                      onPressed: _controller.clear,
-                                      icon: const Icon(
-                                        Icons.clear,
-                                        color: Color(0xFF929292),
-                                      ),
-                                    ),
+                                    suffixIcon: Visibility(
+                                        visible: !_isEmailFormEmpty,
+                                        child: IconButton(
+                                          onPressed: _controller.clear,
+                                          /*onPressed: () {
+                                            _controller.clear;
+                                            if (_controller.text.isEmpty) {
+                                              setState(() {
+                                                _isEmailFormEmpty = true;
+                                              });
+                                            }
+                                          },*/
+                                          icon: const Icon(
+                                            Icons.clear,
+                                            color: Color(0xFF929292),
+                                          ),
+                                        )),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(6),
                                     ),
@@ -143,15 +162,20 @@ class _LoginPage extends State<LoginPage> {
                                   return "Sai mật khẩu";
                                 }
                               },
-                              obscureText: true,
+                              obscureText: _isPasswordHidden,
                               decoration: InputDecoration(
                                   isCollapsed: false,
                                   isDense: true,
                                   suffixIcon: GestureDetector(
-                                    onTap: () {},
-                                    child: Image.asset(
-                                        "assets/images/visibility_off.png"),
-                                  ),
+                                      onTap: () {
+                                        setState(() {
+                                          _isPasswordHidden =
+                                              !_isPasswordHidden;
+                                        });
+                                      },
+                                      child: Image.asset(_isPasswordHidden
+                                          ? "assets/images/visibility_off.png"
+                                          : "assets/images/visibility_on.png")),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
@@ -164,26 +188,7 @@ class _LoginPage extends State<LoginPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    CheckGhiNhoDangNhap(),
-                                    SizedBox(
-                                      width: 6,
-                                    ),
-                                    GestureDetector(
-                                      onTap: (() {
-                                        print("object");
-                                        isChecked = !isChecked;
-                                      }),
-                                      child: Text("Ghi nhớ đăng nhập",
-                                          style: TextStyle(
-                                              color: Color(0xff929292),
-                                              fontSize: 14,
-                                              fontFamily: "roboto",
-                                              fontWeight: FontWeight.w400)),
-                                    ),
-                                  ],
-                                ),
+                                const CheckGhiNhoDangNhap(),
                                 SizedBox(
                                   height: 20,
                                   child: TextButton(
@@ -211,7 +216,6 @@ class _LoginPage extends State<LoginPage> {
                                   backgroundColor: const Color(0xFFFFA700),
                                 ),
                                 onPressed: () {
-                                  // Navigator.pushNamed(context, '/home');
                                   if (formEmail.currentState!.validate()) {
                                     if (formPassword == "123" &&
                                         name == "admin") {
@@ -257,8 +261,8 @@ class _LoginPage extends State<LoginPage> {
                             backgroundColor: const Color(0xFFEEF1F4),
                           ),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Expanded(child: SizedBox()),
                               Image.asset(
                                 'assets/images/iconFacebook.png',
                                 width: 21,
@@ -273,7 +277,6 @@ class _LoginPage extends State<LoginPage> {
                                       fontSize: 16,
                                       fontFamily: "roboto",
                                       fontWeight: FontWeight.w700)),
-                              const Expanded(child: SizedBox()),
                               const SizedBox(width: 6),
                             ],
                           )),
@@ -289,8 +292,8 @@ class _LoginPage extends State<LoginPage> {
                             backgroundColor: const Color(0xFFEEF1F4),
                           ),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Expanded(child: SizedBox()),
                               Image.asset(
                                 'assets/images/iconGoogle.png',
                                 width: 21,
@@ -305,16 +308,13 @@ class _LoginPage extends State<LoginPage> {
                                       fontSize: 16,
                                       fontFamily: "roboto",
                                       fontWeight: FontWeight.w700)),
-                              const Expanded(child: SizedBox()),
                               const SizedBox(width: 8),
                             ],
                           )),
                     ),
                   ),
                 ]),
-                // SizedBox(height: 16),
                 Center(
-                    // ignore: prefer_const_literals_to_create_immutables
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -339,8 +339,6 @@ class _LoginPage extends State<LoginPage> {
   }
 }
 
-bool isChecked = false;
-
 class CheckGhiNhoDangNhap extends StatefulWidget {
   const CheckGhiNhoDangNhap({super.key});
 
@@ -355,30 +353,43 @@ class _CheckGhiNhoDangNhap extends State<CheckGhiNhoDangNhap> {
       return const Color(0xFFFFA700);
     }
 
-    return SizedBox(
-        height: 20,
-        width: 20,
-        child: (CheckboxListTile(
-          title: Text("data"),
-          // child: Text("data"),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
-          // checkColor: Colors.white,
-          // fillColor: MaterialStateProperty.resolveWith(getColor),
-          checkColor: Colors.white,
-          activeColor: Color(0xFFFFA700),
-
-          value: isChecked,
-          onChanged: (bool? value) {
-            setState(() {
-              isChecked = value!;
-            });
-          },
-        )));
+    return GestureDetector(
+      onTap: (() {
+        setState(() {
+          isChecked = !isChecked;
+        });
+      }),
+      child: Row(
+        children: [
+          SizedBox(
+              height: 20,
+              width: 20,
+              child: (Checkbox(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3)),
+                fillColor: MaterialStateProperty.resolveWith(getColor),
+                checkColor: Colors.white,
+                activeColor: const Color(0xFFFFA700),
+                value: isChecked,
+                onChanged: (bool? value) {
+                  setState(() {
+                    isChecked = value!;
+                  });
+                },
+              ))),
+          const Text(" Ghi nhớ đăng nhập",
+              style: TextStyle(
+                  color: Color(0xff929292),
+                  fontSize: 14,
+                  fontFamily: "roboto",
+                  fontWeight: FontWeight.w400)),
+        ],
+      ),
+    );
   }
 }
 
 var _controller = TextEditingController();
-// ignore_for_file: prefer_const_constructors
 
 class MyInputField extends StatefulWidget {
   const MyInputField(
@@ -415,7 +426,7 @@ class MyInputFieldState extends State<MyInputField> {
       child: TextFormField(
         obscureText: widget.obscureText ?? false,
         textAlignVertical: TextAlignVertical.center,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.red,
           fontSize: 14,
         ),
@@ -432,7 +443,7 @@ class MyInputFieldState extends State<MyInputField> {
         decoration: InputDecoration(
             filled: true,
             hintText: widget.placeholder,
-            border: OutlineInputBorder(
+            border: const OutlineInputBorder(
                 borderSide: BorderSide(width: 1, color: Colors.white),
                 borderRadius: BorderRadius.all(Radius.circular(6))),
             fillColor: Colors.white,
@@ -442,9 +453,8 @@ class MyInputFieldState extends State<MyInputField> {
                     child: widget.suffixIcon,
                   )
                 : null,
-            // suffixIcon: suffixIcon,
-            contentPadding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            hintStyle: TextStyle(fontSize: 14.0, color: Colors.white)),
+            contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            hintStyle: const TextStyle(fontSize: 14.0, color: Colors.white)),
       ),
     );
   }
