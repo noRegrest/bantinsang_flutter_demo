@@ -37,6 +37,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       height: 46,
                     ),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
                             height: 32,

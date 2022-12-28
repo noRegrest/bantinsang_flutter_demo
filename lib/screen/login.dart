@@ -1,10 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'home.dart';
 
+final Dio dio = Dio();
+
 bool isChecked = false;
 bool _isPasswordHidden = true;
 bool _isEmailFormEmpty = true;
+bool _isEmailCorrect = false;
+bool _isPasswordCorrect = false;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,6 +18,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPage extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
+
+  final bool _isloading = false;
+  late String _errorMessage;
   final formEmail = GlobalKey<FormState>();
   String formPassword = "";
   String name = "";
@@ -68,7 +78,7 @@ class _LoginPage extends State<LoginPage> {
                           child: SizedBox(
                               height: 48,
                               child: TextFormField(
-                                controller: _controller,
+                                controller: _emailController,
                                 style: const TextStyle(
                                     fontFamily: "roboto",
                                     fontWeight: FontWeight.w400,
@@ -103,15 +113,17 @@ class _LoginPage extends State<LoginPage> {
                                     suffixIcon: Visibility(
                                         visible: !_isEmailFormEmpty,
                                         child: IconButton(
-                                          onPressed: _controller.clear,
-                                          /*onPressed: () {
-                                            _controller.clear;
-                                            if (_controller.text.isEmpty) {
-                                              setState(() {
-                                                _isEmailFormEmpty = true;
-                                              });
-                                            }
-                                          },*/
+                                          onPressed: _emailController.clear,
+                                          // onPressed: () {
+                                          //   setState(() {
+                                          //     _emailController.clear;
+                                          //     _isEmailFormEmpty = true;
+                                          // });
+                                          // if (_emailController.text.isEmpty) {
+                                          //   setState(() {
+                                          //   });
+                                          // }
+                                          // },
                                           icon: const Icon(
                                             Icons.clear,
                                             color: Color(0xFF929292),
@@ -122,8 +134,9 @@ class _LoginPage extends State<LoginPage> {
                                     ),
                                     constraints: const BoxConstraints(
                                         maxHeight: 70, minHeight: 48),
-                                    focusedBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: const BorderSide(
                                             color: Color(0xFFFFA700)))),
                               )),
                         ),
@@ -150,6 +163,7 @@ class _LoginPage extends State<LoginPage> {
                           constraints:
                               const BoxConstraints.tightFor(height: 70),
                           child: TextFormField(
+                              controller: _passController,
                               style: const TextStyle(
                                   fontFamily: "roboto",
                                   fontWeight: FontWeight.w400,
@@ -179,8 +193,9 @@ class _LoginPage extends State<LoginPage> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: const BorderSide(
                                           color: Color(0xFFFFA700))))),
                         ),
                         Container(
@@ -207,15 +222,18 @@ class _LoginPage extends State<LoginPage> {
                             )),
                         const SizedBox(height: 17.5),
                         SizedBox(
-                          child: Container(
+                          child: SizedBox(
                             height: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6)),
                             child: TextButton(
                                 style: TextButton.styleFrom(
-                                  backgroundColor: const Color(0xFFFFA700),
-                                ),
+                                    backgroundColor: const Color(0xFFFFA700),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    )),
                                 onPressed: () {
+                                  checkLogin(_emailController.text,
+                                      _passController.text);
+                                      ,
                                   if (formEmail.currentState!.validate()) {
                                     if (formPassword == "123" &&
                                         name == "admin") {
@@ -258,8 +276,10 @@ class _LoginPage extends State<LoginPage> {
                       child: TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xFFEEF1F4),
-                          ),
+                              backgroundColor: const Color(0xFFEEF1F4),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              )),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -289,8 +309,10 @@ class _LoginPage extends State<LoginPage> {
                       child: TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
-                            backgroundColor: const Color(0xFFEEF1F4),
-                          ),
+                              backgroundColor: const Color(0xFFEEF1F4),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              )),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -354,6 +376,7 @@ class _CheckGhiNhoDangNhap extends State<CheckGhiNhoDangNhap> {
     }
 
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: (() {
         setState(() {
           isChecked = !isChecked;
@@ -364,32 +387,40 @@ class _CheckGhiNhoDangNhap extends State<CheckGhiNhoDangNhap> {
           SizedBox(
               height: 20,
               width: 20,
-              child: (Checkbox(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(3)),
-                fillColor: MaterialStateProperty.resolveWith(getColor),
-                checkColor: Colors.white,
-                activeColor: const Color(0xFFFFA700),
-                value: isChecked,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isChecked = value!;
-                  });
-                },
-              ))),
-          const Text(" Ghi nhớ đăng nhập",
-              style: TextStyle(
-                  color: Color(0xff929292),
-                  fontSize: 14,
-                  fontFamily: "roboto",
-                  fontWeight: FontWeight.w400)),
+              child: Expanded(
+                child: (Checkbox(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3)),
+                  fillColor: MaterialStateProperty.resolveWith(getColor),
+                  checkColor: Colors.white,
+                  activeColor: const Color(0xFFFFA700),
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
+                )),
+              )),
+          const SizedBox(
+            width: 6,
+          ),
+          const SizedBox(
+            height: 21,
+            child: Center(
+              child: Text("Ghi nhớ đăng nhập",
+                  style: TextStyle(
+                      color: Color(0xff929292),
+                      fontSize: 14,
+                      fontFamily: "roboto",
+                      fontWeight: FontWeight.w400)),
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
-var _controller = TextEditingController();
 
 class MyInputField extends StatefulWidget {
   const MyInputField(
@@ -457,5 +488,22 @@ class MyInputFieldState extends State<MyInputField> {
             hintStyle: const TextStyle(fontSize: 14.0, color: Colors.white)),
       ),
     );
+  }
+}
+
+void checkLogin(String email, String password) async {
+  try {
+    Response response =
+        await dio.post("http://10.0.2.2:4000/v1/mobile/check-login/login",
+            options: Options(headers: {
+              // 'accept': 'application/json',
+              'x-token': 'api_toke_mobile',
+              'Content-Type': 'application/json'
+            }),
+            data: {'Email': email, 'Password': password});
+    // ignore: void_checks
+    return (response.data);
+  } catch (e) {
+    print(e);
   }
 }
