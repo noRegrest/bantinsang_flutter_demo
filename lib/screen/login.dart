@@ -5,12 +5,11 @@ import '../model.dart';
 import 'home.dart';
 
 final Dio dio = Dio();
-
 bool isChecked = false;
 bool _isPasswordHidden = true;
 bool _isEmailFormEmpty = true;
 bool _isEmailCorrect = false;
-bool _isPasswordCorrect = false;
+bool _isPasswordFormEmpty = true;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -142,13 +141,6 @@ class _LoginPage extends State<LoginPage> {
                         const SizedBox(
                           height: 4,
                         ),
-                        // const Positioned(
-                        //     bottom: 0,
-                        //     child: Text('Email không tồn tại',
-                        //         style: TextStyle(
-                        //             fontWeight: FontWeight.w400,
-                        //             fontSize: 14,
-                        //             color: Color(0xffC30052)))),
 
                         const SizedBox(
                           height: 16,
@@ -172,9 +164,17 @@ class _LoginPage extends State<LoginPage> {
                         //Password
                         ConstrainedBox(
                           constraints: BoxConstraints.tightFor(
-                              height: _isPasswordCorrect == false ? 70 : 48),
+                              height: _isPasswordFormEmpty == true ? 80 : 48),
                           child: TextFormField(
                               controller: _passController,
+                              onChanged: (text) {
+                                if (_isPasswordFormEmpty) {
+                                  _errorMessage = null;
+                                }
+                                setState(() {
+                                  _isPasswordFormEmpty = true;
+                                });
+                              },
                               autovalidateMode: AutovalidateMode.always,
                               style: const TextStyle(
                                   fontFamily: "roboto",
@@ -182,8 +182,10 @@ class _LoginPage extends State<LoginPage> {
                                   fontSize: 14),
                               validator: (value) {
                                 if (value != null && value.isEmpty) {
+                                  _isPasswordFormEmpty = true;
                                   return "Vui lòng điền mật khẩu";
                                 } else {
+                                  _isPasswordFormEmpty = true;
                                   return _errorMessage;
                                 }
                               },
@@ -258,7 +260,7 @@ class _LoginPage extends State<LoginPage> {
                                       setState(() {
                                         _isEmailCorrect = true;
                                         _isEmailFormEmpty = false;
-                                        _isPasswordCorrect = true;
+                                        _isPasswordFormEmpty = false;
                                       });
 
                                       // ignore: use_build_context_synchronously
@@ -271,7 +273,6 @@ class _LoginPage extends State<LoginPage> {
                                     } else {
                                       setState(() {
                                         _errorMessage = user.message;
-                                        _isPasswordCorrect = false;
                                       });
                                       print(_errorMessage);
                                     }
@@ -448,75 +449,6 @@ class _CheckGhiNhoDangNhap extends State<CheckGhiNhoDangNhap> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class MyInputField extends StatefulWidget {
-  const MyInputField(
-      {super.key,
-      required this.controller,
-      this.placeholder,
-      this.suffixIcon,
-      this.obscureText,
-      this.validate});
-
-  final TextEditingController controller;
-  final String? placeholder;
-  final Widget? suffixIcon;
-  final bool? obscureText;
-  final String? Function(String?)? validate;
-
-  @override
-  State<MyInputField> createState() => MyInputFieldState();
-}
-
-class MyInputFieldState extends State<MyInputField> {
-  bool isValidate = false;
-  void setIsValidate(value) {
-    setState(() {
-      isValidate = value;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints:
-          BoxConstraints.tightFor(height: isValidate == true ? 70 : 48),
-      child: TextFormField(
-        obscureText: widget.obscureText ?? false,
-        textAlignVertical: TextAlignVertical.center,
-        style: const TextStyle(
-          color: Colors.red,
-          fontSize: 14,
-        ),
-        controller: widget.controller,
-        validator: (text) {
-          if (widget.validate != null) {
-            String? validText = widget.validate!(text);
-            setIsValidate(validText != null);
-            return validText;
-          }
-          setIsValidate(false);
-          return null;
-        },
-        decoration: InputDecoration(
-            filled: true,
-            hintText: widget.placeholder,
-            border: const OutlineInputBorder(
-                borderSide: BorderSide(width: 1, color: Colors.white),
-                borderRadius: BorderRadius.all(Radius.circular(6))),
-            fillColor: Colors.white,
-            suffixIcon: widget.suffixIcon != null
-                ? Container(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                    child: widget.suffixIcon,
-                  )
-                : null,
-            contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-            hintStyle: const TextStyle(fontSize: 14.0, color: Colors.white)),
       ),
     );
   }
