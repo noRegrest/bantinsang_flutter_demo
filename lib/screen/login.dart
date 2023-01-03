@@ -191,6 +191,10 @@ class _LoginPage extends State<LoginPage> {
                               decoration: InputDecoration(
                                   isCollapsed: false,
                                   isDense: true,
+                                  errorStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xffC30052)),
                                   suffixIcon: GestureDetector(
                                       onTap: () {
                                         setState(() {
