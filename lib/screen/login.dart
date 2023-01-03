@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../model.dart';
 import 'home.dart';
 
 final Dio dio = Dio();
@@ -21,8 +22,8 @@ class _LoginPage extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
-  final bool _isloading = false;
-  late String _errorMessage;
+  // ignore: prefer_typing_uninitialized_variables
+  String? _errorMessage;
   final formEmail = GlobalKey<FormState>();
   String formPassword = "";
   String name = "";
@@ -73,75 +74,84 @@ class _LoginPage extends State<LoginPage> {
                         ),
                         //Email
                         ConstrainedBox(
-                          constraints:
-                              const BoxConstraints.tightFor(height: 70),
+                          constraints: BoxConstraints.tightFor(
+                              height: _isEmailCorrect == false ? 80 : 48),
                           child: SizedBox(
-                              height: 48,
                               child: TextFormField(
-                                controller: _emailController,
-                                style: const TextStyle(
-                                    fontFamily: "roboto",
+                            controller: _emailController,
+                            style: const TextStyle(
+                                fontFamily: "roboto",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14),
+                            autovalidateMode: AutovalidateMode.always,
+                            onChanged: (text) {
+                              if (text.isEmpty) {
+                                setState(() {
+                                  _isEmailFormEmpty = true;
+                                });
+                              } else {
+                                setState(() {
+                                  _isEmailCorrect = false;
+                                  _isEmailFormEmpty = false;
+                                });
+                              }
+                            },
+                            validator: (value) {
+                              name = value!;
+                              if (value.isEmpty ||
+                                  !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
+                                      .hasMatch(value)) {
+                                _isEmailCorrect = false;
+                                return "Vui lòng nhập Email";
+                              } else {
+                                _isEmailCorrect = true;
+                                return null;
+                              }
+                            },
+                            decoration: InputDecoration(
+                                isCollapsed: false,
+                                isDense: true,
+                                errorStyle: const TextStyle(
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 14),
-                                //luôn kiểm tra tính đúng sai
-                                autovalidateMode: AutovalidateMode.always,
-                                onChanged: (text) {
-                                  if (text.isEmpty) {
-                                    setState(() {
-                                      _isEmailFormEmpty = true;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      _isEmailFormEmpty = false;
-                                    });
-                                  }
-                                },
-                                validator: (value) {
-                                  name = value!;
-                                  if (value == "admin") {
-                                    return null;
-                                  } else if (value.isEmpty ||
-                                      !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
-                                          .hasMatch(value)) {
-                                    return "Email không tồn tại";
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                    isCollapsed: false,
-                                    isDense: true,
-                                    suffixIcon: Visibility(
-                                        visible: !_isEmailFormEmpty,
-                                        child: IconButton(
-                                          onPressed: _emailController.clear,
-                                          // onPressed: () {
-                                          //   setState(() {
-                                          //     _emailController.clear;
-                                          //     _isEmailFormEmpty = true;
-                                          // });
-                                          // if (_emailController.text.isEmpty) {
-                                          //   setState(() {
-                                          //   });
-                                          // }
-                                          // },
-                                          icon: const Icon(
-                                            Icons.clear,
-                                            color: Color(0xFF929292),
-                                          ),
-                                        )),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    constraints: const BoxConstraints(
-                                        maxHeight: 70, minHeight: 48),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(6),
-                                        borderSide: const BorderSide(
-                                            color: Color(0xFFFFA700)))),
-                              )),
+                                    color: Color(0xffC30052)),
+                                suffixIcon: Visibility(
+                                    visible: !_isEmailFormEmpty,
+                                    child: IconButton(
+                                      onPressed: () {
+                                        _emailController.clear();
+                                        setState(() {
+                                          _isEmailFormEmpty = true;
+                                          _isEmailCorrect = false;
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.clear,
+                                        color: Color(0xFF929292),
+                                      ),
+                                    )),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                    borderSide: const BorderSide(
+                                        color: Color(0xFFFFA700)))),
+                          )),
                         ),
                         const SizedBox(
                           height: 4,
+                        ),
+                        // const Positioned(
+                        //     bottom: 0,
+                        //     child: Text('Email không tồn tại',
+                        //         style: TextStyle(
+                        //             fontWeight: FontWeight.w400,
+                        //             fontSize: 14,
+                        //             color: Color(0xffC30052)))),
+
+                        const SizedBox(
+                          height: 16,
                         ),
                         const Text.rich(TextSpan(
                             style: TextStyle(
@@ -155,25 +165,26 @@ class _LoginPage extends State<LoginPage> {
                                   text: "*",
                                   style: TextStyle(color: Color(0xFFC30052)))
                             ])),
+
                         const SizedBox(
                           height: 4,
                         ),
                         //Password
                         ConstrainedBox(
-                          constraints:
-                              const BoxConstraints.tightFor(height: 70),
+                          constraints: BoxConstraints.tightFor(
+                              height: _isPasswordCorrect == false ? 70 : 48),
                           child: TextFormField(
                               controller: _passController,
+                              autovalidateMode: AutovalidateMode.always,
                               style: const TextStyle(
                                   fontFamily: "roboto",
                                   fontWeight: FontWeight.w400,
                                   fontSize: 14),
                               validator: (value) {
-                                formPassword = value!;
-                                if (formPassword == "123") {
-                                  return null;
+                                if (value != null && value.isEmpty) {
+                                  return "Vui lòng điền mật khẩu";
                                 } else {
-                                  return "Sai mật khẩu";
+                                  return _errorMessage;
                                 }
                               },
                               obscureText: _isPasswordHidden,
@@ -198,8 +209,9 @@ class _LoginPage extends State<LoginPage> {
                                       borderSide: const BorderSide(
                                           color: Color(0xFFFFA700))))),
                         ),
+
                         Container(
-                            margin: const EdgeInsets.fromLTRB(2, 4, 0, 0),
+                            margin: const EdgeInsets.fromLTRB(2, 10, 0, 0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -220,7 +232,7 @@ class _LoginPage extends State<LoginPage> {
                                 )
                               ],
                             )),
-                        const SizedBox(height: 17.5),
+                        const SizedBox(height: 18),
                         SizedBox(
                           child: SizedBox(
                             height: 50,
@@ -230,19 +242,34 @@ class _LoginPage extends State<LoginPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(6),
                                     )),
-                                onPressed: () {
-                                  checkLogin(_emailController.text,
-                                      _passController.text);
-                                      ,
+                                onPressed: () async {
+                                  _errorMessage = null;
+
                                   if (formEmail.currentState!.validate()) {
-                                    if (formPassword == "123" &&
-                                        name == "admin") {
+                                    User user = await checkLogin(
+                                        email: _emailController.text.trim(),
+                                        password: _passController.text.trim());
+                                    if (user.status == true) {
+                                      // ignore: use_build_context_synchronously
+                                      setState(() {
+                                        _isEmailCorrect = true;
+                                        _isEmailFormEmpty = false;
+                                        _isPasswordCorrect = true;
+                                      });
+
+                                      // ignore: use_build_context_synchronously
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const HomePageWidget()),
                                       );
+                                    } else {
+                                      setState(() {
+                                        _errorMessage = user.message;
+                                        _isPasswordCorrect = false;
+                                      });
+                                      print(_errorMessage);
                                     }
                                   }
                                 },
@@ -491,19 +518,20 @@ class MyInputFieldState extends State<MyInputField> {
   }
 }
 
-void checkLogin(String email, String password) async {
+Future<User> checkLogin(
+    {required String email, required String password}) async {
   try {
-    Response response =
-        await dio.post("http://10.0.2.2:4000/v1/mobile/check-login/login",
-            options: Options(headers: {
-              // 'accept': 'application/json',
-              'x-token': 'api_toke_mobile',
-              'Content-Type': 'application/json'
-            }),
-            data: {'Email': email, 'Password': password});
-    // ignore: void_checks
-    return (response.data);
-  } catch (e) {
+    Response response = await dio.post(
+        "http://10.0.2.2:4000/v1/mobile/check-login/login",
+        options: Options(headers: {
+          'x-token': 'api_toke_mobile',
+          'Content-Type': 'application/json'
+        }),
+        data: {'Email': email, 'Password': password});
+    var outputResponse = User.fromJson(response.data);
+    return (outputResponse);
+  } on DioError catch (e) {
     print(e);
+    return User(status: false);
   }
 }
