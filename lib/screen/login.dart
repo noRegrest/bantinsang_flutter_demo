@@ -10,6 +10,7 @@ bool _isPasswordHidden = true;
 bool _isEmailFormEmpty = true;
 bool _isEmailCorrect = false;
 bool _isPasswordFormEmpty = true;
+bool _isPasswordCorrect = false;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -164,16 +165,20 @@ class _LoginPage extends State<LoginPage> {
                         //Password
                         ConstrainedBox(
                           constraints: BoxConstraints.tightFor(
-                              height: _isPasswordFormEmpty == true ? 80 : 48),
+                              height: _isPasswordCorrect == false ? 80 : 48),
                           child: TextFormField(
                               controller: _passController,
                               onChanged: (text) {
-                                if (_isPasswordFormEmpty) {
-                                  _errorMessage = null;
+                                if (text.isEmpty) {
+                                  setState(() {
+                                    _isPasswordCorrect = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    _isPasswordCorrect = false;
+                                    _isPasswordFormEmpty = false;
+                                  });
                                 }
-                                setState(() {
-                                  _isPasswordFormEmpty = true;
-                                });
                               },
                               autovalidateMode: AutovalidateMode.always,
                               style: const TextStyle(
@@ -261,6 +266,7 @@ class _LoginPage extends State<LoginPage> {
                                         _isEmailCorrect = true;
                                         _isEmailFormEmpty = false;
                                         _isPasswordFormEmpty = false;
+                                        _isPasswordCorrect = true;
                                       });
 
                                       // ignore: use_build_context_synchronously
@@ -272,6 +278,7 @@ class _LoginPage extends State<LoginPage> {
                                       );
                                     } else {
                                       setState(() {
+                                        _isPasswordCorrect = false;
                                         _errorMessage = user.message;
                                       });
                                       print(_errorMessage);
