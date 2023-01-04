@@ -331,10 +331,10 @@ class _UserSettingState extends State<UserSetting> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
-            icon: Image.asset('assets/images/homeicon.png'),
-            activeIcon: Image.asset('assets/images/homeicon.png'),
+            icon: Image.asset('assets/images/home_inactive.png'),
+            activeIcon: Image.asset('assets/images/home_active.png'),
             label: 'Home',
           ),
           BottomNavigationBarItem(
@@ -358,7 +358,7 @@ class _UserSettingState extends State<UserSetting> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: const Color(0xffFFA700),
         onTap: _onItemTapped,
       ),
     );
