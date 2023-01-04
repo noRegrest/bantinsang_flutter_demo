@@ -22,9 +22,11 @@ class _UserSettingState extends State<UserSetting> {
   bool _value = false;
   void _onChanged(bool value) {
     _authenticateWithBiometrics();
+    // if (_authorized==) {
     setState(() {
       _value = value;
     });
+    // }
   }
 
   int _selectedIndex = 0;
@@ -155,7 +157,8 @@ class _UserSettingState extends State<UserSetting> {
 
   @override
   Widget build(BuildContext context) {
-    /*return MaterialApp(
+    /*
+    return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
@@ -272,12 +275,19 @@ class _UserSettingState extends State<UserSetting> {
                         fontFamily: 'roboto',
                         fontSize: 18,
                         fontWeight: FontWeight.w400)),
+                // const Expanded(child: SizedBox()),
+                // ElevatedButton(
+                //     onPressed: _authenticateWithBiometrics,
+                //     child: const Text("Alo")),
                 const Expanded(child: SizedBox()),
                 SizedBox(
                     height: 31,
                     width: 51,
-                    child:
-                        CupertinoSwitch(value: _value, onChanged: _onChanged)),
+                    child: CupertinoSwitch(
+                        activeColor: const Color(0xff34C759),
+                        trackColor: const Color(0xff4C4C4D),
+                        value: _value,
+                        onChanged: _onChanged)),
               ],
             ),
             const Divider(
