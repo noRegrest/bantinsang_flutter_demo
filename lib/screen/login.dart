@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:learning_flutter/widgets/bottom_nav.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model.dart';
-import 'home.dart';
 
 final Dio dio = Dio();
 bool isChecked = false;
@@ -11,6 +12,8 @@ bool _isEmailFormEmpty = true;
 bool _isEmailCorrect = false;
 bool _isPasswordFormEmpty = true;
 bool _isPasswordCorrect = false;
+
+SharedPreferences? storage;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,12 +24,44 @@ class LoginPage extends StatefulWidget {
 class _LoginPage extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  String _savedString = '';
 
   // ignore: prefer_typing_uninitialized_variables
   String? _errorMessage;
   final formEmail = GlobalKey<FormState>();
   String formPassword = "";
   String name = "";
+
+  Future<void> saveStringToPreferences(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, value);
+  }
+
+  Future<String?> getStringFromPreferences(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedString();
+  }
+
+  // Load the saved string from Shared Preferences
+  _loadSavedString() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savedString = prefs.getString('my_string') ?? '';
+    });
+  }
+
+  // Save the string to Shared Preferences
+  _saveString(String key, String str) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, str.trim());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +118,7 @@ class _LoginPage extends State<LoginPage> {
                                 fontFamily: "roboto",
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14),
-                            autovalidateMode: AutovalidateMode.always,
+                            // autovalidateMode: AutovalidateMode.always,
                             onChanged: (text) {
                               if (text.isEmpty) {
                                 setState(() {
@@ -180,7 +215,7 @@ class _LoginPage extends State<LoginPage> {
                                   });
                                 }
                               },
-                              autovalidateMode: AutovalidateMode.always,
+                              // autovalidateMode: AutovalidateMode.always,
                               style: const TextStyle(
                                   fontFamily: "roboto",
                                   fontWeight: FontWeight.w400,
@@ -268,13 +303,19 @@ class _LoginPage extends State<LoginPage> {
                                         _isPasswordFormEmpty = false;
                                         _isPasswordCorrect = true;
                                       });
-
+                                      if (isChecked) {
+                                        _saveString(
+                                            "Email", _emailController.text);
+                                        _saveString(
+                                            "Password", _passController.text);
+                                      }
                                       // ignore: use_build_context_synchronously
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                const HomePageWidget()),
+                                                const BottomNaviButtons()),
+                                        // const BottomNaviButtons()),
                                       );
                                     } else {
                                       setState(() {
@@ -419,6 +460,7 @@ class _CheckGhiNhoDangNhap extends State<CheckGhiNhoDangNhap> {
       onTap: (() {
         setState(() {
           isChecked = !isChecked;
+          print('---------- $isChecked');
         });
       }),
       child: Row(
@@ -437,6 +479,7 @@ class _CheckGhiNhoDangNhap extends State<CheckGhiNhoDangNhap> {
                   onChanged: (bool? value) {
                     setState(() {
                       isChecked = value!;
+                      print('---------- $isChecked');
                     });
                   },
                 )),

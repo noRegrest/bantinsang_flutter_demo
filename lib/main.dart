@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:learning_flutter/screen/profile.dart';
+import 'package:learning_flutter/screen/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,8 +15,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const LoginPage(),
-      home: const UserSetting(),
+      home: const LoginPage(),
+      // home: const UserSetting(),
+      // home: const BottomNaviButtons(),
+      // home: const Test(),
     );
   }
 }

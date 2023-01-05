@@ -10,14 +10,6 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -685,39 +677,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               ],
             )),
       ),
-
-      //bottom navi
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/homeicon.png'),
-            activeIcon: Image.asset('assets/images/homeicon.png'),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/compassicon.png'),
-            label: 'Chuyên mục',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/bookmarkicon.png'),
-            label: 'Quan tâm',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/profileicon.png'),
-            label: 'Cá nhân',
-            // labelStyle: MaterialStateTextStyle.resolveWith(
-            //     (Set<MaterialState> states) {
-            //   final Color color = states.contains(MaterialState.error)
-            //       ? Theme.of(context).errorColor
-            //       : Colors.orange;
-            //   return TextStyle(color: color, letterSpacing: 1.3);
-            // })
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
+      // bottomNavigationBar: const BottomNaviButtons()
     );
   }
 }

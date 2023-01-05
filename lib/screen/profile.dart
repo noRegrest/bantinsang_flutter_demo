@@ -29,14 +29,6 @@ class _UserSettingState extends State<UserSetting> {
     // }
   }
 
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -121,8 +113,7 @@ class _UserSettingState extends State<UserSetting> {
         _authorized = 'Authenticating';
       });
       authenticated = await auth.authenticate(
-        localizedReason:
-            'Scan your fingerprint (or face or whatever) to authenticate',
+        localizedReason: 'Scan your fingerprint to authenticate',
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: true,
@@ -330,37 +321,7 @@ class _UserSettingState extends State<UserSetting> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/home_inactive.png'),
-            activeIcon: Image.asset('assets/images/home_active.png'),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/compassicon.png'),
-            label: 'Chuyên mục',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/bookmarkicon.png'),
-            label: 'Quan tâm',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/profileicon.png'),
-            label: 'Cá nhân',
-            // labelStyle: MaterialStateTextStyle.resolveWith(
-            //     (Set<MaterialState> states) {
-            //   final Color color = states.contains(MaterialState.error)
-            //       ? Theme.of(context).errorColor
-            //       : Colors.orange;
-            //   return TextStyle(color: color, letterSpacing: 1.3);
-            // })
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xffFFA700),
-        onTap: _onItemTapped,
-      ),
+      // bottomNavigationBar: const BottomNaviButtons(),
     );
   }
 }
