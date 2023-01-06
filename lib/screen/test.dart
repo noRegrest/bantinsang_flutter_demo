@@ -144,5 +144,104 @@ class _TestState extends State<Test> {
         ),
       ),
     );
+    /*return MaterialApp(
+        home: Scaffold(
+            body: Container(
+      margin: const EdgeInsets.fromLTRB(24, 96, 25, 0),
+      child: SingleChildScrollView(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text("Đăng",
+            style: TextStyle(
+                color: Color(0xff030323),
+                fontSize: 48,
+                fontFamily: "roboto",
+                fontWeight: FontWeight.w700)),
+        const Text("nhập",
+            style: TextStyle(
+                color: Color(0xFFFFA700),
+                fontSize: 48,
+                fontFamily: "roboto",
+                fontWeight: FontWeight.w700)),
+        const SizedBox(
+          height: 24,
+        ),
+        Row(
+          children: [
+            const SizedBox(height: 24, width: 24, child: Icon(Icons.abc)),
+            const SizedBox(width: 15),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Xin chào,",
+                    style: TextStyle(
+                        fontFamily: 'roboto',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff929292))),
+                FutureBuilder<dynamic>(
+                  future: _loadSavedString('Username'),
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null) {
+                      return const Text(
+                        "Người dùng khách",
+                        style: TextStyle(
+                            fontFamily: 'roboto',
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xff000000)),
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data);
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    return const CircularProgressIndicator();
+                  },
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+              ],
+            )
+          ],
+        ),
+        const Text("Mật khẩu*"),
+        Container(
+          margin: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+          height: 48,
+          child: TextFormField(
+            decoration: InputDecoration(
+                hintText: "password",
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(6))),
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Row(
+          children: const [Expanded(child: SizedBox()), Text("Quên mật khẩu")],
+        ),
+        Row(
+          children: [
+            Expanded(
+                child: ElevatedButton(
+                    onPressed: () {}, child: const Text('data'))),
+          ],
+        ),
+        const Center(child: Text('hoặc đăng nhập với')),
+        Center(
+          child: GestureDetector(
+            onTap: () {
+
+            },
+            child: Image.asset("assets/images/touchID.png"),
+          ),
+        ),
+      ])),
+    )));
+  */
   }
 }

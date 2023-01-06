@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:learning_flutter/screen/login.dart';
+import 'package:learning_flutter/widgets/bottom_nav.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,9 +15,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      // home: const LoginPage(),
       // home: const UserSetting(),
-      // home: const BottomNaviButtons(),
+      home: const BottomNaviButtons(),
       // home: const Test(),
     );
   }

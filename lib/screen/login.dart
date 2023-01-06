@@ -43,16 +43,12 @@ class _LoginPage extends State<LoginPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _loadSavedString();
-  }
 
   // Load the saved string from Shared Preferences
-  _loadSavedString() async {
+  _loadSavedString(String key) async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _savedString = prefs.getString('my_string') ?? '';
+      _savedString = prefs.getString(key) ?? '';
     });
   }
 
@@ -64,6 +60,359 @@ class _LoginPage extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var column = Column(
+      children: [
+        Form(
+            key: formEmail,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text.rich(TextSpan(
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: "roboto",
+                        fontWeight: FontWeight.w400),
+                    children: [
+                      TextSpan(text: "Email"),
+                      TextSpan(
+                          text: "*", style: TextStyle(color: Color(0xFFC30052)))
+                    ])),
+                const SizedBox(
+                  height: 4,
+                ),
+                //Email
+                ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(
+                      height: _isEmailCorrect == false ? 80 : 48),
+                  child: SizedBox(
+                      child: TextFormField(
+                    controller: _emailController,
+                    style: const TextStyle(
+                        fontFamily: "roboto",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14),
+                    autovalidateMode: AutovalidateMode.always,
+                    onChanged: (text) {
+                      if (text.isEmpty) {
+                        setState(() {
+                          _isEmailFormEmpty = true;
+                        });
+                      } else {
+                        setState(() {
+                          _isEmailCorrect = false;
+                          _isEmailFormEmpty = false;
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      name = value!;
+                      if (value.isEmpty ||
+                          !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
+                              .hasMatch(value)) {
+                        _isEmailCorrect = false;
+                        return "Vui lòng nhập Email";
+                      } else {
+                        _isEmailCorrect = true;
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                        isCollapsed: false,
+                        isDense: true,
+                        errorStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xffC30052)),
+                        suffixIcon: Visibility(
+                            visible: !_isEmailFormEmpty,
+                            child: IconButton(
+                              onPressed: () {
+                                _emailController.clear();
+                                setState(() {
+                                  _isEmailFormEmpty = true;
+                                  _isEmailCorrect = false;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.clear,
+                                color: Color(0xFF929292),
+                              ),
+                            )),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFFFA700)))),
+                  )),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+
+                const SizedBox(
+                  height: 16,
+                ),
+                const Text.rich(TextSpan(
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: "roboto",
+                        fontWeight: FontWeight.w400),
+                    children: [
+                      TextSpan(text: "Mật khẩu"),
+                      TextSpan(
+                          text: "*", style: TextStyle(color: Color(0xFFC30052)))
+                    ])),
+
+                const SizedBox(
+                  height: 4,
+                ),
+                //Password
+                ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(
+                      height: _isPasswordCorrect == false ? 80 : 48),
+                  child: TextFormField(
+                      controller: _passController,
+                      onChanged: (text) {
+                        if (text.isEmpty) {
+                          setState(() {
+                            _isPasswordCorrect = false;
+                          });
+                        } else {
+                          setState(() {
+                            _isPasswordCorrect = false;
+                            _isPasswordFormEmpty = false;
+                          });
+                        }
+                      },
+                      autovalidateMode: AutovalidateMode.always,
+                      style: const TextStyle(
+                          fontFamily: "roboto",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14),
+                      validator: (value) {
+                        if (value != null && value.isEmpty) {
+                          _isPasswordFormEmpty = true;
+                          return "Vui lòng điền mật khẩu";
+                        } else {
+                          _isPasswordFormEmpty = true;
+                          return _errorMessage;
+                        }
+                      },
+                      obscureText: _isPasswordHidden,
+                      decoration: InputDecoration(
+                          isCollapsed: false,
+                          isDense: true,
+                          errorStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xffC30052)),
+                          suffixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isPasswordHidden = !_isPasswordHidden;
+                                });
+                              },
+                              child: Image.asset(_isPasswordHidden
+                                  ? "assets/images/visibility_off.png"
+                                  : "assets/images/visibility_on.png")),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide:
+                                  const BorderSide(color: Color(0xFFFFA700))))),
+                ),
+
+                Container(
+                    margin: const EdgeInsets.fromLTRB(2, 10, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const CheckGhiNhoDangNhap(),
+                        SizedBox(
+                          height: 20,
+                          child: TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                              ),
+                              onPressed: () {},
+                              child: const Text("Quên mật khẩu?",
+                                  style: TextStyle(
+                                      color: Color(0xFF5890FF),
+                                      fontSize: 14,
+                                      fontFamily: "roboto",
+                                      fontWeight: FontWeight.w400))),
+                        )
+                      ],
+                    )),
+                const SizedBox(height: 18),
+                SizedBox(
+                  child: SizedBox(
+                    height: 50,
+                    child: TextButton(
+                        style: TextButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFA700),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            )),
+                        onPressed: () async {
+                          _errorMessage = null;
+
+                          if (formEmail.currentState!.validate()) {
+                            User user = await checkLogin(
+                                email: _emailController.text.trim(),
+                                password: _passController.text.trim());
+                            if (user.status == true) {
+                              // ignore: use_build_context_synchronously
+                              setState(() {
+                                _isEmailCorrect = true;
+                                _isEmailFormEmpty = false;
+                                _isPasswordFormEmpty = false;
+                                _isPasswordCorrect = true;
+                              });
+                              if (isChecked) {
+                                // _saveString(
+                                // "Password", _passController.text);
+                                _saveString("Email", _emailController.text);
+                                _saveString("Id", user.data?.id ?? '');
+                                _saveString("WalletAddress",
+                                    user.data?.walletAddress ?? '');
+                                _saveString(
+                                    "UserName", user.data?.userName ?? '');
+                                _saveString("Role", user.data?.role ?? '');
+                                _saveString("token", user.token ?? '');
+                              }
+                              // ignore: use_build_context_synchronously
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BottomNaviButtons()),
+                                // const BottomNaviButtons()),
+                              );
+                            } else {
+                              setState(() {
+                                _isPasswordCorrect = false;
+                                _errorMessage = user.message;
+                              });
+                              print(_errorMessage);
+                            }
+                          }
+                        },
+                        child: const Center(
+                            child: Text("Đăng nhập",
+                                style: TextStyle(
+                                    color: Color(0xffffffff),
+                                    fontSize: 16,
+                                    fontFamily: "roboto",
+                                    fontWeight: FontWeight.w700)))),
+                  ),
+                ),
+              ],
+            )),
+        const SizedBox(height: 16),
+        const Center(
+          child: Text("hoặc đăng nhập với",
+              style: TextStyle(
+                  color: Color(0xFF929292),
+                  fontSize: 14,
+                  fontFamily: "roboto",
+                  fontWeight: FontWeight.w400)),
+        ),
+        const SizedBox(height: 16),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Expanded(
+            child: Container(
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(50)),
+              height: 48,
+              child: TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFEEF1F4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/iconFacebook.png',
+                        width: 21,
+                        height: 21,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text("Facebook",
+                          style: TextStyle(
+                              color: Color(0xff667080),
+                              fontSize: 16,
+                              fontFamily: "roboto",
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 6),
+                    ],
+                  )),
+            ),
+          ),
+          const SizedBox(width: 31),
+          Expanded(
+            child: SizedBox(
+              height: 48,
+              child: TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFEEF1F4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/iconGoogle.png',
+                        width: 21,
+                        height: 21,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      const Text("Google",
+                          style: TextStyle(
+                              color: Color(0xff667080),
+                              fontSize: 16,
+                              fontFamily: "roboto",
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 8),
+                    ],
+                  )),
+            ),
+          ),
+        ]),
+        Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Chưa có tài khoản?",
+                style: TextStyle(
+                    color: Color(0xff929292),
+                    fontSize: 14,
+                    fontFamily: "roboto",
+                    fontWeight: FontWeight.w400)),
+            TextButton(
+                onPressed: () {},
+                child: const Text("Đăng ký",
+                    style: TextStyle(
+                        fontFamily: "poppins", color: Color(0xFFFFA700))))
+          ],
+        )),
+      ],
+    );
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(children: [
@@ -87,353 +436,38 @@ class _LoginPage extends State<LoginPage> {
                 const SizedBox(
                   height: 24,
                 ),
-                Form(
-                    key: formEmail,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text.rich(TextSpan(
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontFamily: "roboto",
-                                fontWeight: FontWeight.w400),
+                if (_loadSavedString('fingerprint_login') != 'true') column,
+                if (_loadSavedString('fingerprint_login') == 'true')
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.abc),
+                          const SizedBox(width: 30),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextSpan(text: "Email"),
-                              TextSpan(
-                                  text: "*",
-                                  style: TextStyle(color: Color(0xFFC30052)))
-                            ])),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        //Email
-                        ConstrainedBox(
-                          constraints: BoxConstraints.tightFor(
-                              height: _isEmailCorrect == false ? 80 : 48),
-                          child: SizedBox(
-                              child: TextFormField(
-                            controller: _emailController,
-                            style: const TextStyle(
-                                fontFamily: "roboto",
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14),
-                            // autovalidateMode: AutovalidateMode.always,
-                            onChanged: (text) {
-                              if (text.isEmpty) {
-                                setState(() {
-                                  _isEmailFormEmpty = true;
-                                });
-                              } else {
-                                setState(() {
-                                  _isEmailCorrect = false;
-                                  _isEmailFormEmpty = false;
-                                });
-                              }
-                            },
-                            validator: (value) {
-                              name = value!;
-                              if (value.isEmpty ||
-                                  !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
-                                      .hasMatch(value)) {
-                                _isEmailCorrect = false;
-                                return "Vui lòng nhập Email";
-                              } else {
-                                _isEmailCorrect = true;
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                                isCollapsed: false,
-                                isDense: true,
-                                errorStyle: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xffC30052)),
-                                suffixIcon: Visibility(
-                                    visible: !_isEmailFormEmpty,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        _emailController.clear();
-                                        setState(() {
-                                          _isEmailFormEmpty = true;
-                                          _isEmailCorrect = false;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                        Icons.clear,
-                                        color: Color(0xFF929292),
-                                      ),
-                                    )),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    borderSide: const BorderSide(
-                                        color: Color(0xFFFFA700)))),
-                          )),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        const Text.rich(TextSpan(
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontFamily: "roboto",
-                                fontWeight: FontWeight.w400),
-                            children: [
-                              TextSpan(text: "Mật khẩu"),
-                              TextSpan(
-                                  text: "*",
-                                  style: TextStyle(color: Color(0xFFC30052)))
-                            ])),
-
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        //Password
-                        ConstrainedBox(
-                          constraints: BoxConstraints.tightFor(
-                              height: _isPasswordCorrect == false ? 80 : 48),
-                          child: TextFormField(
-                              controller: _passController,
-                              onChanged: (text) {
-                                if (text.isEmpty) {
-                                  setState(() {
-                                    _isPasswordCorrect = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    _isPasswordCorrect = false;
-                                    _isPasswordFormEmpty = false;
-                                  });
-                                }
-                              },
-                              // autovalidateMode: AutovalidateMode.always,
-                              style: const TextStyle(
-                                  fontFamily: "roboto",
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14),
-                              validator: (value) {
-                                if (value != null && value.isEmpty) {
-                                  _isPasswordFormEmpty = true;
-                                  return "Vui lòng điền mật khẩu";
-                                } else {
-                                  _isPasswordFormEmpty = true;
-                                  return _errorMessage;
-                                }
-                              },
-                              obscureText: _isPasswordHidden,
-                              decoration: InputDecoration(
-                                  isCollapsed: false,
-                                  isDense: true,
-                                  errorStyle: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xffC30052)),
-                                  suffixIcon: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _isPasswordHidden =
-                                              !_isPasswordHidden;
-                                        });
-                                      },
-                                      child: Image.asset(_isPasswordHidden
-                                          ? "assets/images/visibility_off.png"
-                                          : "assets/images/visibility_on.png")),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                      borderSide: const BorderSide(
-                                          color: Color(0xFFFFA700))))),
-                        ),
-
-                        Container(
-                            margin: const EdgeInsets.fromLTRB(2, 10, 0, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const CheckGhiNhoDangNhap(),
-                                SizedBox(
-                                  height: 20,
-                                  child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero,
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text("Quên mật khẩu?",
-                                          style: TextStyle(
-                                              color: Color(0xFF5890FF),
-                                              fontSize: 14,
-                                              fontFamily: "roboto",
-                                              fontWeight: FontWeight.w400))),
-                                )
-                              ],
-                            )),
-                        const SizedBox(height: 18),
-                        SizedBox(
-                          child: SizedBox(
-                            height: 50,
-                            child: TextButton(
-                                style: TextButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFFA700),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                    )),
-                                onPressed: () async {
-                                  _errorMessage = null;
-
-                                  if (formEmail.currentState!.validate()) {
-                                    User user = await checkLogin(
-                                        email: _emailController.text.trim(),
-                                        password: _passController.text.trim());
-                                    if (user.status == true) {
-                                      // ignore: use_build_context_synchronously
-                                      setState(() {
-                                        _isEmailCorrect = true;
-                                        _isEmailFormEmpty = false;
-                                        _isPasswordFormEmpty = false;
-                                        _isPasswordCorrect = true;
-                                      });
-                                      if (isChecked) {
-                                        _saveString(
-                                            "Email", _emailController.text);
-                                        _saveString(
-                                            "Password", _passController.text);
-                                      }
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const BottomNaviButtons()),
-                                        // const BottomNaviButtons()),
-                                      );
-                                    } else {
-                                      setState(() {
-                                        _isPasswordCorrect = false;
-                                        _errorMessage = user.message;
-                                      });
-                                      print(_errorMessage);
-                                    }
+                              const Text("Xin chào,"),
+                              FutureBuilder<dynamic>(
+                                future: _loadSavedString('Username'),
+                                builder: (context, snapshot) {
+                                  if (snapshot.data == null) {
+                                    return const Text("Người dùng khách");
                                   }
+                                  if (snapshot.hasData) {
+                                    return Text(snapshot.data);
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  }
+                                  return const CircularProgressIndicator();
                                 },
-                                child: const Center(
-                                    child: Text("Đăng nhập",
-                                        style: TextStyle(
-                                            color: Color(0xffffffff),
-                                            fontSize: 16,
-                                            fontFamily: "roboto",
-                                            fontWeight: FontWeight.w700)))),
-                          ),
-                        ),
-                      ],
-                    )),
-                const SizedBox(height: 16),
-                const Center(
-                  child: Text("hoặc đăng nhập với",
-                      style: TextStyle(
-                          color: Color(0xFF929292),
-                          fontSize: 14,
-                          fontFamily: "roboto",
-                          fontWeight: FontWeight.w400)),
-                ),
-                const SizedBox(height: 16),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50)),
-                      height: 48,
-                      child: TextButton(
-                          onPressed: () {},
-                          style: TextButton.styleFrom(
-                              backgroundColor: const Color(0xFFEEF1F4),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              )),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/iconFacebook.png',
-                                width: 21,
-                                height: 21,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Text("Facebook",
-                                  style: TextStyle(
-                                      color: Color(0xff667080),
-                                      fontSize: 16,
-                                      fontFamily: "roboto",
-                                      fontWeight: FontWeight.w700)),
-                              const SizedBox(width: 6),
+                              )
                             ],
-                          )),
-                    ),
-                  ),
-                  const SizedBox(width: 31),
-                  Expanded(
-                    child: SizedBox(
-                      height: 48,
-                      child: TextButton(
-                          onPressed: () {},
-                          style: TextButton.styleFrom(
-                              backgroundColor: const Color(0xFFEEF1F4),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              )),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/iconGoogle.png',
-                                width: 21,
-                                height: 21,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Text("Google",
-                                  style: TextStyle(
-                                      color: Color(0xff667080),
-                                      fontSize: 16,
-                                      fontFamily: "roboto",
-                                      fontWeight: FontWeight.w700)),
-                              const SizedBox(width: 8),
-                            ],
-                          )),
-                    ),
-                  ),
-                ]),
-                Center(
-                    child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Chưa có tài khoản?",
-                        style: TextStyle(
-                            color: Color(0xff929292),
-                            fontSize: 14,
-                            fontFamily: "roboto",
-                            fontWeight: FontWeight.w400)),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text("Đăng ký",
-                            style: TextStyle(
-                                fontFamily: "poppins",
-                                color: Color(0xFFFFA700))))
-                  ],
-                )),
+                          )
+                        ],
+                      )
+                    ],
+                  )
               ],
             ),
           )

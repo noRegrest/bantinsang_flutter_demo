@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 
@@ -20,13 +21,31 @@ class _UserSettingState extends State<UserSetting> {
   String _authorized = 'Not Authorized';
   bool _isAuthenticating = false;
   bool _value = false;
-  void _onChanged(bool value) {
-    _authenticateWithBiometrics();
-    // if (_authorized==) {
-    setState(() {
-      _value = value;
-    });
-    // }
+  void _onChanged(bool value) async {
+    await _authenticateWithBiometrics();
+    var username = await _loadSavedString('UserName');
+    print(username);
+    if (_authorized == "Authorized") {
+      setState(() {
+        _value = value;
+        _saveString('fingerprint_login_$username', "$_value");
+      });
+    }
+  }
+
+  _loadSavedString(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key);
+  }
+
+  _saveString(String key, String str) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, str);
+  }
+
+  _logOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
   }
 
   @override
@@ -258,6 +277,30 @@ class _UserSettingState extends State<UserSetting> {
             ),
             Row(
               children: [
+                Image.asset("assets/images/user_folder.png"),
+                const SizedBox(width: 21.26),
+                const Text("Thông tin cá nhân",
+                    style: TextStyle(
+                        color: Color(0xff000000),
+                        fontFamily: 'roboto',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400)),
+                const Expanded(child: SizedBox()),
+                IconButton(
+                    onPressed: () {},
+                    icon: SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Image.asset(
+                            "assets/images/icons8_next_page 1.png"))),
+              ],
+            ),
+            const Divider(
+              thickness: 1,
+              color: Color(0xff929292),
+            ),
+            Row(
+              children: [
                 const Icon(Icons.fingerprint),
                 const SizedBox(width: 21.26),
                 const Text("Đăng nhập vân tay",
@@ -266,10 +309,6 @@ class _UserSettingState extends State<UserSetting> {
                         fontFamily: 'roboto',
                         fontSize: 18,
                         fontWeight: FontWeight.w400)),
-                // const Expanded(child: SizedBox()),
-                // ElevatedButton(
-                //     onPressed: _authenticateWithBiometrics,
-                //     child: const Text("Alo")),
                 const Expanded(child: SizedBox()),
                 SizedBox(
                     height: 31,
@@ -280,10 +319,6 @@ class _UserSettingState extends State<UserSetting> {
                         value: _value,
                         onChanged: _onChanged)),
               ],
-            ),
-            const Divider(
-              thickness: 1,
-              color: Color(0xff929292),
             ),
             const Expanded(child: SizedBox()),
             Row(children: [
@@ -296,7 +331,7 @@ class _UserSettingState extends State<UserSetting> {
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(const Color(0xffFFA700))),
-                    onPressed: () {},
+                    onPressed: _logOut,
                     child: const Text("Đăng xuất",
                         style: TextStyle(
                             color: Color(0xffffffff),
