@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:learning_flutter/screen/login.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
@@ -158,7 +159,20 @@ class _UserSettingState extends State<UserSetting> {
         _authorized = 'Authenticating';
       });
       authenticated = await auth.authenticate(
-        localizedReason: 'Scan your fingerprint to authenticate',
+        localizedReason: 'Đặt ngón tay zô quét đi ba',
+        authMessages: const <AuthMessages>[
+          AndroidAuthMessages(
+              signInTitle: 'Alo1',
+              biometricHint: 'Alo2',
+              biometricNotRecognized: "không nhận ra",
+              biometricRequiredTitle: "cần",
+              biometricSuccess: "cồng thanh",
+              cancelButton: "Hủy",
+              deviceCredentialsRequiredTitle: "hỏi chấm",
+              deviceCredentialsSetupDescription: "hỏi chấm chấm",
+              goToSettingsButton: "vào cài đặt",
+              goToSettingsDescription: "thông tin cài đặt"),
+        ],
         options: const AuthenticationOptions(
           stickyAuth: true,
           biometricOnly: true,
@@ -347,7 +361,6 @@ class _UserSettingState extends State<UserSetting> {
 
                           return CupertinoSwitch(
                               activeColor: const Color(0xff34C759),
-                              trackColor: const Color(0xff4C4C4D),
                               value: _value,
                               onChanged: _onChanged);
                         } else {
