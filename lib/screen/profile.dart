@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:learning_flutter/screen/login.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,21 +22,40 @@ class _UserSettingState extends State<UserSetting> {
   String _authorized = 'Not Authorized';
   bool _isAuthenticating = false;
   bool _value = false;
+
   void _onChanged(bool value) async {
-    await _authenticateWithBiometrics();
     var username = await _loadSavedString('UserName');
-    print(username);
+    await _authenticateWithBiometrics();
     if (_authorized == "Authorized") {
+      _deleteString('fingerprint_login_null');
+
       setState(() {
         _value = value;
-        _saveString('fingerprint_login_$username', "$_value");
+        print(_value);
       });
+      _setValue('fingerprint_login_$username', _value);
     }
   }
 
   _loadSavedString(String key) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);
+  }
+
+  _setValue(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+  }
+
+  Future<bool> _getInitialValue() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var username = await _loadSavedString('UserName');
+    return prefs.getBool('fingerprint_login_$username') ?? false;
+  }
+
+  _deleteString(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
   }
 
   _saveString(String key, String str) async {
@@ -46,6 +66,12 @@ class _UserSettingState extends State<UserSetting> {
   _logOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      // const BottomNaviButtons()),
+    );
   }
 
   @override
@@ -313,13 +339,34 @@ class _UserSettingState extends State<UserSetting> {
                 SizedBox(
                     height: 31,
                     width: 51,
-                    child: CupertinoSwitch(
+                    child: FutureBuilder(
+                      future: _getInitialValue(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          _value = snapshot.data ?? false;
+
+                          return CupertinoSwitch(
+                              activeColor: const Color(0xff34C759),
+                              trackColor: const Color(0xff4C4C4D),
+                              value: _value,
+                              onChanged: _onChanged);
+                        } else {
+                          return CupertinoSwitch(
+                              activeColor: const Color(0xff34C759),
+                              trackColor: const Color(0xff4C4C4D),
+                              value: _value,
+                              onChanged: _onChanged);
+                        }
+                      },
+                    )),
+              ],
+            ),
+/**CupertinoSwitch(
                         activeColor: const Color(0xff34C759),
                         trackColor: const Color(0xff4C4C4D),
                         value: _value,
-                        onChanged: _onChanged)),
-              ],
-            ),
+                        onChanged: _onChanged) */
+
             const Expanded(child: SizedBox()),
             Row(children: [
               Expanded(
